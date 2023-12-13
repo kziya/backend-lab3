@@ -7,3 +7,8 @@ services:
       dockerfile: backend-lab2/Dockerfile
     ports:
       - "8080:3000"
+  db:
+    image: postgres:15.4-alpine3.18
+    environment:
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: test
