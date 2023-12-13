@@ -1,7 +1,4 @@
-import os
-
 PROPAGATE_EXCEPTIONS = True
-SQLALCHEMY_DATABASE_URI = f'postgresql://{os.environ["POSTGRES_USER"]}:{os.environ["POSTGRES_PASSWORD"]}@{os.environ["POSTGRES_HOST"]}'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 API_TITLE = 'Finance Rest Api'
 API_VERSION = 'v1'

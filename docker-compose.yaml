@@ -2,13 +2,18 @@ version: '3'
 services:
   backend:
     restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: test
     build:
-      context: backend-lab2
-      dockerfile: backend-lab2/Dockerfile
+      dockerfile: ./Dockerfile
     ports:
       - "8080:3000"
+
   db:
     image: postgres:15.4-alpine3.18
     environment:
+      POSTGRES_USER: root
       POSTGRES_PASSWORD: root
       POSTGRES_DB: test
