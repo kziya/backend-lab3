@@ -18,7 +18,7 @@ class UserService:
         return jsonify(addResult), 200
 
     def getUsers(self):
-        return jsonify(userRepository.getAllUsers()), 200
+        return userRepository.getAllUsers()
 
     def deleteUser(self, id):
         removeResult = userRepository.removeUserById(id)

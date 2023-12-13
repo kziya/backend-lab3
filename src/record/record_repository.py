@@ -1,52 +1,51 @@
-from src.record.record_entity import Record
+from src import db
+from src.record.record_model import RecordModel
 
 
 class RecordRepository:
     _records = []
 
     def addRecord(self, idUser, idCategory, expenditureAmount):
-        if not self._records:
-            record = Record(1, idUser, idCategory, expenditureAmount).getDict()
-            self._records.append(record)
-            return record
-        else:
-            lastElemId = self._records[-1].get('id')
-            record = Record(lastElemId + 1, idUser, idCategory, expenditureAmount).getDict()
-            self._records.append(record)
-            return record
+        record = RecordModel(idUser=idUser, idCategory=idCategory, expenditureAmount=expenditureAmount)
+        db.session.add(record)
+        db.session.commit()
+
+        return record.toDict()
 
     def removeRecordById(self, id):
-        targetRecordIndex = self._getIndexByRecordId(id)
-        if targetRecordIndex is not None:
-            self._records.pop(targetRecordIndex)
-            return True
-        else:
-            return False
+        recordToRemove = RecordModel.query.get(id)
+
+        if recordToRemove is not None:
+            db.session.delete(recordToRemove)
+            db.session.commit()
+
+        return True
 
     def getRecordById(self, id):
-        targetRecordIndex = self._getIndexByRecordId(id)
-        if targetRecordIndex is not None:
-            return self._records[targetRecordIndex]
-        else:
-            return None
+        record = RecordModel.query.get(id)
 
-    def getRecords(self, idUser, idCategory):
-        filteredRecords = []
-        for record in self._records:
-            if (idUser is None or record.get('idUser') == idUser) and (
-                    idCategory is None or record.get('idCategory') == idCategory):
-                filteredRecords.append(record)
+        if record is not None:
+            return record.toDict()
 
-        return filteredRecords
+        return None
 
-    def _getIndexByRecordId(self, id):
-        targetRecordIndex = None
-        for index, record in enumerate(self._records):
-            if record.get('id') == id:
-                targetRecordIndex = index
-                break
-        print(id, targetRecordIndex)
-        return targetRecordIndex
+    def getRecords(self, id_user, id_category):
+        query = RecordModel.query
+
+        if id_user is not None and id_category is not None:
+            # Both id_user and id_category are provided
+            query = query.filter(RecordModel.idUser == id_user, RecordModel.idCategory == id_category)
+        elif id_user is not None:
+            # Only id_user is provided
+            query = query.filter(RecordModel.idUser == id_user)
+        elif id_category is not None:
+            # Only id_category is provided
+            query = query.filter(RecordModel.idCategory == id_category)
+
+        # Execute the query
+        records = query.all()
+
+        return RecordModel.toDictList(records)
 
 
 recordRepository = RecordRepository()

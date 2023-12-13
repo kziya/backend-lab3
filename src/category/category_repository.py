@@ -1,46 +1,34 @@
-from src.category.category_entity import Category
+from src import db
+from src.category.category_model import CategoryModel
 
 
 class CategoryRepository:
     _categories = []
 
     def addCategory(self, name):
-        if not self._categories:
-            category = Category(1, name).getDict()
-            self._categories.append(category)
-            return category
-        else:
-            lastElemId = self._categories[-1].get('id')
-            category = Category(lastElemId + 1, name).getDict()
-            self._categories.append(category)
-            return category
+        category = CategoryModel(name=name)
+        db.session.add(category)
+        db.session.commit()
+
+        return category.toDict()
 
     def removeCategoryById(self, id):
-        targetCategoryIndex = self._getIndexByCategoryId(id)
-        if targetCategoryIndex is not None:
-            self._categories.pop(targetCategoryIndex)
-            return True
-        else:
-            return False
+        categoryToDelete = CategoryModel.query.get(id)
+        if categoryToDelete is not None:
+            db.session.delete(categoryToDelete)
+            db.session.commit()
+
+        return True
 
     def getAllCategories(self):
-        return self._categories
+        return CategoryModel.toDictList(CategoryModel.query.all())
 
     def getCategoryById(self, id):
-        targetCategoryIndex = self._getIndexByCategoryId(id)
-        if targetCategoryIndex is not None:
-            return self._categories[targetCategoryIndex]
+        category = CategoryModel.query.get(id)
+        if category is not None:
+            return category.toDict()
         else:
             return None
-
-    def _getIndexByCategoryId(self, id):
-        targetCategoryIndex = None
-        for index, category in enumerate(self._categories):
-            if category.get('id') == id:
-                targetCategoryIndex = index
-                break
-        print(id, targetCategoryIndex)
-        return targetCategoryIndex
 
 
 categoryRepository = CategoryRepository()

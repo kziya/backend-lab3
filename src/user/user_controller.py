@@ -1,6 +1,8 @@
-from flask import request
+from flask import request, jsonify
+from marshmallow import ValidationError
 
 from src import app
+from src.user.user_schema import UserSchema
 from src.user.user_service import UserService
 
 userService = UserService()
@@ -13,7 +15,11 @@ def getUserById(id):
 
 @app.route('/user', methods=['POST'])
 def addUser():
-    return userService.addUser(request.get_json())
+    try:
+        UserSchema().load(data=request.get_json())
+        return userService.addUser(request.get_json())
+    except ValidationError as err:
+        return jsonify({"message": err.messages})
 
 
 @app.route('/users', methods=['GET'])

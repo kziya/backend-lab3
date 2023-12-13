@@ -1,9 +1,15 @@
 from flask import request
 
 from src import app
+from src.record.record_model import RecordModel
 from src.record.record_service import RecordService
 
 recordService = RecordService()
+
+
+@app.route('/record/all', methods=['GET'])
+def getAllRecords():
+    return RecordModel.toDictList(RecordModel.query.all())
 
 
 @app.route('/record', methods=['POST'])

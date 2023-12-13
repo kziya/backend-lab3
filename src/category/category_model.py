@@ -1,4 +1,4 @@
-from src.db import db
+from src import db
 
 
 class CategoryModel(db.Model):
@@ -8,3 +8,13 @@ class CategoryModel(db.Model):
     name = db.Column(db.String(100), nullable=False, unique=True)
 
     record = db.relationship('RecordModel', back_populates='category', lazy='dynamic')
+
+    def toDict(self):
+        return {
+            'id': self.id,
+            'name': self.name
+        }
+
+    @staticmethod
+    def toDictList(array):
+        return list(map(lambda x: x.toDict(), array))

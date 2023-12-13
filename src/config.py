@@ -1,4 +1,5 @@
 PROPAGATE_EXCEPTIONS = True
+SQLALCHEMY_DATABASE_URI = f'postgresql://root:root@localhost:5432/test'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 API_TITLE = 'Finance Rest Api'
 API_VERSION = 'v1'
