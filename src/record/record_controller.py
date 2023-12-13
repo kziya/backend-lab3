@@ -1,7 +1,9 @@
-from flask import request
+from flask import request, jsonify
+from marshmallow import ValidationError
 
 from src import app
 from src.record.record_model import RecordModel
+from src.record.record_schema import RecordSchema
 from src.record.record_service import RecordService
 
 recordService = RecordService()
@@ -14,7 +16,11 @@ def getAllRecords():
 
 @app.route('/record', methods=['POST'])
 def addRecord():
-    return recordService.addRecord(request.get_json())
+    try:
+        RecordSchema().load(data=request.get_json())
+        return recordService.addRecord(request.get_json())
+    except ValidationError as err:
+        return jsonify({"message": err.messages})
 
 
 @app.route('/record/<int:id>', methods=['GET'])
