@@ -12,8 +12,13 @@ class CategoryService:
         addResult = categoryRepository.addCategory(categoryName)
         return jsonify(addResult), 201
 
-    def getAllCategories(self):
-        return jsonify(categoryRepository.getAllCategories()), 200
+    def addPrivateCategory(self, requestBody):
+        addResult = categoryRepository.addCategory(requestBody.get('name'), requestBody.get('idPrivateUser'))
+        return jsonify(addResult), 201
+
+    def getAllCategories(self, id):
+        return jsonify(
+            categoryRepository.getAllPublicCategories() + categoryRepository.getAllPrivateCategories(id=id)), 200
 
     def deleteCategory(self, id):
         if id is None:

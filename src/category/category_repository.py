@@ -5,8 +5,11 @@ from src.category.category_model import CategoryModel
 class CategoryRepository:
     _categories = []
 
-    def addCategory(self, name):
-        category = CategoryModel(name=name)
+    def addCategory(self, name, idPrivateUser):
+        if idPrivateUser is None:
+            idPrivateUser = 0
+            
+        category = CategoryModel(name=name, idPrivateUser=idPrivateUser)
         db.session.add(category)
         db.session.commit()
 
@@ -20,8 +23,11 @@ class CategoryRepository:
 
         return True
 
-    def getAllCategories(self):
-        return CategoryModel.toDictList(CategoryModel.query.all())
+    def getAllPublicCategories(self):
+        return CategoryModel.toDictList(CategoryModel.query.all(CategoryModel.idPrivateUser == 0))
+
+    def getAllPrivateCategories(self, id):
+        return CategoryModel.toDictList(CategoryModel.query.filter(CategoryModel.idPrivateUser == id))
 
     def getCategoryById(self, id):
         category = CategoryModel.query.get(id)

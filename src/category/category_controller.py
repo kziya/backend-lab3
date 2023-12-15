@@ -2,7 +2,7 @@ from flask import request
 from marshmallow import ValidationError
 
 from src import app
-from src.category.category_schema import CategorySchema
+from src.category.category_schema import CategorySchema, PrivateCategorySchema
 from src.category.category_service import CategoryService
 
 categoryService = CategoryService()
@@ -17,9 +17,18 @@ def addCategory():
         return {'message': e.messages}
 
 
+@app.route('/category/private', methods=['POST'])
+def addPrivateCategory():
+    try:
+        PrivateCategorySchema().load(data=request.get_json())
+        return categoryService.addPrivateCategory(request.get_json())
+    except ValidationError as e:
+        return {'message': e.messages}
+
+
 @app.route('/category', methods=['GET'])
 def getCategories():
-    return categoryService.getAllCategories()
+    return categoryService.getAllCategories(request.get_json().id)
 
 
 @app.route('/category/<int:id>', methods=['DELETE'])
