@@ -28,7 +28,7 @@ def addPrivateCategory():
 
 @app.route('/category', methods=['GET'])
 def getCategories():
-    return categoryService.getAllCategories(request.get_json().id)
+    return categoryService.getAllCategories(request.args.get('userId'))
 
 
 @app.route('/category/<int:id>', methods=['DELETE'])
